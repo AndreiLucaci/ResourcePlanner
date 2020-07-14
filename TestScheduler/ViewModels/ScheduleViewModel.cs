@@ -167,23 +167,17 @@ namespace TestScheduler.ViewModels
             };
 
             var itmsGrouped = new List<TaskViewModel>();
-            Users.GroupBy(x => x.Department).OrderByDescending(x => x.Key).ToList().ForEach(g =>
+            Users.GroupBy(x => x.Department).Select(x => x.Key).ToList().ForEach(x =>
             {
-                foreach (var x in g)
+                Users.Add(new UserViewModel
                 {
-                    for (var i = 0; i < itms.Count; i++)
-                    {
-                        if (itms[i].UserId == x.Id)
-                        {
-                            itmsGrouped.Add(itms[i]);
-                            itms.RemoveAt(i);
-                        }
-                    }
-                }
-                itmsGrouped.Add(CreateTask(int.MinValue, DateTime.MinValue, DateTime.MinValue, 0, string.Empty, string.Empty, int.MinValue));
+                    Department = x,
+                    Name = "                   ",
+                    Id = (int)DateTime.Now.ToUniversalTime().Ticks
+                });
             });
 
-            Tasks = new ObservableCollection<TaskViewModel>(itmsGrouped);
+            Tasks = new ObservableCollection<TaskViewModel>(itms);
         }
 
 

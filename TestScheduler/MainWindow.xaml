@@ -166,7 +166,7 @@
                                 ShowDateNavigationPanel="False" 
                                 GroupType="Resource" 
                                 FirstDayOfWeek="Monday"
-                                ShowOnlyResourceAppointments="True">
+                                ShowOnlyResourceAppointments="False">
                             <dxsch:SchedulerControl.DataSource>
                                 <dxsch:DataSource ResourcesSource="{Binding Users}" AppointmentsSource="{Binding Tasks}">
                                     <dxsch:DataSource.ResourceMappings>

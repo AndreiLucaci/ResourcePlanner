@@ -1,7 +1,9 @@
-﻿using DevExpress.Xpf.Core;
+﻿using DevExpress.Mvvm.UI;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Core.Native;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.Scheduling;
+using DevExpress.Xpf.Scheduling.Visual;
 using System;
 using System.Linq;
 using System.Windows.Controls;
@@ -15,13 +17,38 @@ namespace TestScheduler
     /// </summary>
     public partial class MainWindow : ThemedWindow
     {
-        IScrollInfo TopScrollElement { get; set; }
-        IScrollInfo BottomScrollElement { get; set; }
+        private ScrollViewer LeftScroll { get; set; }
+
+        private ScrollViewer RightScroll { get; set; }
 
         public MainWindow()
         {
             InitializeComponent();
-            LayoutUpdated += MainWindow_LayoutUpdated;
+            timelineView.Loaded += TimelineView_Loaded;
+        }
+
+        private void TimelineView_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            var myControl = (TableView)(this.Resources["myTemplate"] as ControlTemplate).FindName("gridTable", ResourceTree);
+            LeftScroll = LayoutTreeHelper.GetVisualChildren(myControl).OfType<ScrollViewer>().FirstOrDefault();
+            RightScroll = LayoutTreeHelper.GetVisualChildren(scheduler).OfType<SchedulerScrollViewer>().FirstOrDefault();
+
+            if (LeftScroll != null && RightScroll != null)
+            {
+                LeftScroll.Name = "LeftScroll";
+                LeftScroll.ScrollChanged += ScrollOwner_ScrollChanged;
+                RightScroll.Name = "RightScroll";
+                RightScroll.ScrollChanged += ScrollOwner_ScrollChanged;
+            }
+        }
+
+        void ScrollOwner_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            ScrollViewer scrv = sender as ScrollViewer;
+            if (scrv.Name == "LeftScroll")
+                RightScroll.ScrollToVerticalOffset(LeftScroll.VerticalOffset);
+            else
+                LeftScroll.ScrollToVerticalOffset(RightScroll.VerticalOffset);
         }
 
         private void BarEditItem_EditValueChanged(object sender, System.Windows.RoutedEventArgs e)
@@ -39,27 +66,6 @@ namespace TestScheduler
                 grid.GroupBy("Department");
                 grid.ExpandAllGroups();
             }
-        }
-
-        void MainWindow_LayoutUpdated(object sender, EventArgs e)
-        {
-            //var template = this.Resources["myTemplate"] as ControlTemplate;
-            //var myControl = (TableView)template.FindName("gridTable", ResourceTree);
-            //TopScrollElement = (DataPresenter)LayoutHelper.FindElement(LayoutHelper.FindElementByName(myControl, "PART_ScrollContentPresenter"), (el) => el is DataPresenter);
-            //BottomScrollElement = (DataPresenter)LayoutHelper.FindElement(LayoutHelper.FindElementByName(scheduler, "PART_ScrollContentPresenter"), (el) => el is DataPresenter);
-            //TopScrollElement.ScrollOwner.Name = "TopScroll";
-            //BottomScrollElement.ScrollOwner.Name = "BottomScroll";
-            //TopScrollElement.ScrollOwner.ScrollChanged += ScrollOwner_ScrollChanged;
-            //BottomScrollElement.ScrollOwner.ScrollChanged += ScrollOwner_ScrollChanged;
-        }
-
-        void ScrollOwner_ScrollChanged(object sender, ScrollChangedEventArgs e)
-        {
-            ScrollViewer scrv = sender as ScrollViewer;
-            if (scrv.Name == "TopScroll")
-                BottomScrollElement.SetVerticalOffset(TopScrollElement.VerticalOffset);
-            else
-                TopScrollElement.SetVerticalOffset(BottomScrollElement.VerticalOffset);
         }
     }
 }
