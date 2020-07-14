@@ -18,7 +18,7 @@ namespace TestScheduler.ViewModels
 
         public virtual RowHeightViewModel SelectedRowHeight { get; set; } = RowHeightViewModel.Single;
 
-        public ObservableCollection<RowHeightViewModel> RowHeights { get; set; } = new ObservableCollection<RowHeightViewModel>
+        public virtual ObservableCollection<RowHeightViewModel> RowHeights { get; set; } = new ObservableCollection<RowHeightViewModel>
         {
             RowHeightViewModel.Single,
             RowHeightViewModel.OnePointFive,
@@ -167,7 +167,7 @@ namespace TestScheduler.ViewModels
             };
 
             var itmsGrouped = new List<TaskViewModel>();
-            Users.GroupBy(x => x.Department).OrderBy(x => x.Key).ToList().ForEach(g =>
+            Users.GroupBy(x => x.Department).OrderByDescending(x => x.Key).ToList().ForEach(g =>
             {
                 foreach (var x in g)
                 {

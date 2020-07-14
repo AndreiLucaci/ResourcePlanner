@@ -31,6 +31,6 @@ namespace TestScheduler.ViewModels
         {
             Height = 80,
             Name = "Double row"
-        };;
+        };
     }
 }
