@@ -81,9 +81,11 @@
     <Compile Include="Converters\ExpandoToUserConverter.cs" />
     <Compile Include="Converters\ExpandoToTaskViewModelConverter.cs" />
     <Compile Include="Converters\IOneWayConverter.cs" />
+    <Compile Include="Converters\UserToResourceItemConverter.cs" />
     <Compile Include="CustomRecurrenceWindow.xaml.cs">
       <DependentUpon>CustomRecurrenceWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="ViewModels\RowHeightViewModel.cs" />
     <Compile Include="ViewModels\ScheduleViewModel.cs" />
     <Compile Include="ViewModels\TaskViewModel.cs" />

@@ -67,5 +67,31 @@ namespace TestScheduler
                 grid.ExpandAllGroups();
             }
         }
+
+        private void scheduler_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
+        {
+
+        }
+
+        private void scheduler_DependencyPropertyChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
+        {
+
+        }
+
+        private void gridcontrol_GroupRowExpanding(object sender, RowAllowEventArgs e)
+        {
+            if (e.Row != null && e.Row is UserViewModel user && DataContext is ScheduleViewModel model)
+            {
+                model.Users.Where(x => x.Department == user.Department).ToList().ForEach(x => x.IsVisible = true);
+            }
+        }
+
+        private void gridcontrol_GroupRowCollapsing(object sender, RowAllowEventArgs e)
+        {
+            if (e.Row != null && e.Row is UserViewModel user && DataContext is ScheduleViewModel model)
+            {
+                model.Users.Where(x => x.Department == user.Department).ToList().ForEach(x => x.IsVisible = false);
+            }
+        }
     }
 }

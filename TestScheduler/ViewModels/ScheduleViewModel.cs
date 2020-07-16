@@ -1,4 +1,5 @@
 ﻿using DevExpress.Mvvm.DataAnnotations;
+using DevExpress.Xpf.Scheduling;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,6 +8,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using TestScheduler.Converters;
+using TestScheduler.Extensions;
 
 namespace TestScheduler.ViewModels
 {
@@ -20,6 +22,7 @@ namespace TestScheduler.ViewModels
 
         public virtual ObservableCollection<RowHeightViewModel> RowHeights { get; set; } = new ObservableCollection<RowHeightViewModel>
         {
+            RowHeightViewModel.Thin,
             RowHeightViewModel.Single,
             RowHeightViewModel.OnePointFive,
             RowHeightViewModel.Double
@@ -61,7 +64,7 @@ namespace TestScheduler.ViewModels
                 CreateUser(20, "Léa","#f6dce6")
             };
 
-            Users = new ObservableCollection<UserViewModel>(res);
+            Users = new ObservableCollection<UserViewModel>(res.GroupBy(x => x.Department).OrderBy(x => x.Key).SelectMany(x => x).ToArray());
 
             var itms = new List<TaskViewModel>{
                 CreateTask( 1, UnixTimeStampToDateTime(1594624987d), UnixTimeStampToDateTime(1595746824d), 37,"Kitra", "velit. Cras lorem lorem, luctus ut, pellentesque", 7),
@@ -167,21 +170,16 @@ namespace TestScheduler.ViewModels
             };
 
             var itmsGrouped = new List<TaskViewModel>();
-            Users.GroupBy(x => x.Department).Select(x => x.Key).ToList().ForEach(x =>
-            {
-                Users.Add(new UserViewModel
-                {
-                    Department = x,
-                    Name = "                   ",
-                    Id = (int)DateTime.Now.ToUniversalTime().Ticks
-                });
-            });
 
-            Tasks = new ObservableCollection<TaskViewModel>(itms);
+            AllTasks = new ObservableCollection<TaskViewModel>(itms);
+            SelectedTasks = new ObservableCollection<TaskViewModel>(itms);
+            var converter = new UserToResourceItemConverter();
+            UsersRes = new ObservableCollection<ResourceItem>(Users.Select(converter.Convert));
         }
 
 
-        public virtual ObservableCollection<TaskViewModel> Tasks { get; set; } = new ObservableCollection<TaskViewModel>();
+        public virtual ObservableCollection<TaskViewModel> SelectedTasks { get; set; } = new ObservableCollection<TaskViewModel>();
+        public virtual ObservableCollection<TaskViewModel> AllTasks { get; set; } = new ObservableCollection<TaskViewModel>();
         public virtual ObservableCollection<UserViewModel> Users { get; set; } = new ObservableCollection<UserViewModel>();
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -291,6 +289,7 @@ namespace TestScheduler.ViewModels
             TimeFrameViewModel.Monthly,
             TimeFrameViewModel.Yearly,
         };
+        public virtual ObservableCollection<ResourceItem> UsersRes { get; set; }
 
         private UserViewModel CreateUser(int id, string name, string color)
         {
@@ -323,6 +322,17 @@ namespace TestScheduler.ViewModels
             //};
 
             return res;
+        }
+
+        public void CollapseRows(IEnumerable<int> ids)
+        {
+            SelectedTasks.RemoveAll(x => ids.Contains(x.UserId));
+        }
+
+        public void ExpandRows(IEnumerable<int> ids)
+        {
+            //AllTasks.Where(x => ids.Contains(x.UserId)
+            //SelectedTasks.Where(x => x.UserId == userId).ToList().ForEach(x => SelectedTasks.Remove(x));
         }
     }
 }

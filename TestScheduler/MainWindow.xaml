@@ -21,6 +21,8 @@
                 <dxg:GridControl 
                     EnableSmartColumnsGeneration="True" 
                     MaxHeight="5000"
+                    GroupRowExpanding="gridcontrol_GroupRowExpanding"
+                    GroupRowCollapsing="gridcontrol_GroupRowCollapsing"
                     x:Name="gridcontrol"
                     Loaded="GridControl_Loaded"
                     ItemsSource="{Binding Users}">
@@ -149,9 +151,9 @@
                                     <Grid x:Name="LayoutRoot" MaxHeight="100">
                                         <lc:LayoutControl Orientation="Horizontal">
                                             <lc:LayoutGroup Orientation="Horizontal">
-                                                <lc:LayoutItem Label="{Binding RowData.Row.CustomFields.Id}" />
+                                                <lc:LayoutItem Label="{Binding RowData.Row.Id}" />
                                                 <lc:LayerSeparator Width="10" />
-                                                <lc:LayoutItem Label="{Binding RowData.Row.CustomFields.Name}" />
+                                                <lc:LayoutItem Label="{Binding RowData.Row.Caption}" />
                                             </lc:LayoutGroup>
                                         </lc:LayoutControl>
                                     </Grid>
@@ -165,12 +167,15 @@
                                 x:Name="scheduler" 
                                 ShowDateNavigationPanel="False" 
                                 GroupType="Resource" 
+                                AllowAppointmentConflicts="False"
                                 FirstDayOfWeek="Monday"
+                            SizeChanged="scheduler_SizeChanged"
+                            DependencyPropertyChanged="scheduler_DependencyPropertyChanged"
                                 ShowOnlyResourceAppointments="False">
                             <dxsch:SchedulerControl.DataSource>
-                                <dxsch:DataSource ResourcesSource="{Binding Users}" AppointmentsSource="{Binding Tasks}">
+                                <dxsch:DataSource ResourcesSource="{Binding Users}" AppointmentsSource="{Binding AllTasks}">
                                     <dxsch:DataSource.ResourceMappings>
-                                        <dxsch:ResourceMappings Caption="Name" Id="Id" Group="Department">
+                                        <dxsch:ResourceMappings Caption="Name" Id="Id" Group="Department" Visible="IsVisible">
                                             <dxsch:CustomFieldMapping Mapping="Id" />
                                             <dxsch:CustomFieldMapping Mapping="Name" />
                                         </dxsch:ResourceMappings>
