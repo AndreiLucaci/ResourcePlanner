@@ -7,6 +7,7 @@ namespace TestScheduler.ViewModels
     [POCOViewModel]
     public class RowHeightViewModel
     {
+        public virtual int AppointmentHeight { get => Height; }
         public virtual int Height { get; set; }
         public virtual string Name { get; set; }
 

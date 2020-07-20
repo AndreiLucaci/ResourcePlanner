@@ -1,4 +1,5 @@
-﻿using DevExpress.Mvvm.UI;
+﻿using DevExpress.Mvvm;
+using DevExpress.Mvvm.UI;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Core.Native;
 using DevExpress.Xpf.Grid;
@@ -21,15 +22,44 @@ namespace TestScheduler
 
         private ScrollViewer RightScroll { get; set; }
 
+        public DelegateCommand RowSizeClickCommand { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
             timelineView.Loaded += TimelineView_Loaded;
+            RowSizeClickCommand = new DelegateCommand(SyncRowSizes);
+            DataContextChanged += MainWindow_DataContextChanged;
+            Loaded += MainWindow_Loaded;
+        }
+
+        private void MainWindow_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            AttachToModelPropertyChanges();
+        }
+
+        private void MainWindow_DataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
+        {
+            AttachToModelPropertyChanges();
+        }
+
+        private void AttachToModelPropertyChanges()
+        {
+            if (DataContext is SchedulerViewModel model)
+            {
+                model.PropertyChanged += (a, o) =>
+                {
+                    if (o.PropertyName == nameof(model.SelectedRowHeight))
+                    {
+                        SyncRowSizes();
+                    }
+                };
+            }
         }
 
         private void TimelineView_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
-            var myControl = (TableView)(this.Resources["myTemplate"] as ControlTemplate).FindName("gridTable", ResourceTree);
+            var myControl = (TreeListView)(this.Resources["myTemplate"] as ControlTemplate).FindName("treeListView", ResourceTree);
             LeftScroll = LayoutTreeHelper.GetVisualChildren(myControl).OfType<ScrollViewer>().FirstOrDefault();
             RightScroll = LayoutTreeHelper.GetVisualChildren(scheduler).OfType<SchedulerScrollViewer>().FirstOrDefault();
 
@@ -39,6 +69,40 @@ namespace TestScheduler
                 LeftScroll.ScrollChanged += ScrollOwner_ScrollChanged;
                 RightScroll.Name = "RightScroll";
                 RightScroll.ScrollChanged += ScrollOwner_ScrollChanged;
+            }
+
+            SetSameResourceColors();
+        }
+
+        private void SetSameResourceColors()
+        {
+            var resources = timelineView.Scheduler.ResourceItems;
+            if (resources != null && DataContext is SchedulerViewModel model)
+            {
+                foreach (var res in resources)
+                {
+                    var usr = model.Users.Single(x => x.Id == (int)res.Id && x.Name == res.Caption);
+                    usr.Color = res.Color.ToString();
+                }
+            }
+        }
+
+        private void SyncRowSizes()
+        {
+            var cellContainers = ((DevExpress.Xpf.Scheduling.VisualData.TimelineViewVisualDataBase)timelineView.VisualData).CellContainers;
+
+            foreach (var cellContainer in cellContainers)
+            {
+                var nrOfAppointments = cellContainer.Appointments.Count();
+                if (nrOfAppointments >= 0 && DataContext is SchedulerViewModel model)
+                {
+                    var res = model.Users.Single(x => x.Id == (int)cellContainer.Resource.Id && x.Name == cellContainer.Resource.Caption);
+
+                    res.RowHeight =
+                        nrOfAppointments == 0
+                            ? model.SelectedRowHeight.Height - 1
+                            : (model.SelectedRowHeight.Height - 2) * nrOfAppointments + 11 + nrOfAppointments;
+                }
             }
         }
 
@@ -53,7 +117,7 @@ namespace TestScheduler
 
         private void BarEditItem_EditValueChanged(object sender, System.Windows.RoutedEventArgs e)
         {
-            if (DataContext is ScheduleViewModel model)
+            if (DataContext is SchedulerViewModel model)
             {
                 model.RefreshTimeFrameSelection();
             }
@@ -80,7 +144,7 @@ namespace TestScheduler
 
         private void gridcontrol_GroupRowExpanding(object sender, RowAllowEventArgs e)
         {
-            if (e.Row != null && e.Row is UserViewModel user && DataContext is ScheduleViewModel model)
+            if (e.Row != null && e.Row is UserViewModel user && DataContext is SchedulerViewModel model)
             {
                 model.Users.Where(x => x.Department == user.Department).ToList().ForEach(x => x.IsVisible = true);
             }
@@ -88,10 +152,15 @@ namespace TestScheduler
 
         private void gridcontrol_GroupRowCollapsing(object sender, RowAllowEventArgs e)
         {
-            if (e.Row != null && e.Row is UserViewModel user && DataContext is ScheduleViewModel model)
+            if (e.Row != null && e.Row is UserViewModel user && DataContext is SchedulerViewModel model)
             {
                 model.Users.Where(x => x.Department == user.Department).ToList().ForEach(x => x.IsVisible = false);
             }
+        }
+
+        private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            SyncRowSizes();
         }
     }
 }

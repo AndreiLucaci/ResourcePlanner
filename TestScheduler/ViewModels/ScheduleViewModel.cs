@@ -13,13 +13,33 @@ using TestScheduler.Extensions;
 namespace TestScheduler.ViewModels
 {
     [POCOViewModel]
-    public class ScheduleViewModel : INotifyPropertyChanged
+    public class SchedulerViewModel : INotifyPropertyChanged
     {
         private IOneWayConverter<ExpandoObject, TaskViewModel> _taskConverter = new ExpandoToTaskViewModelConverter();
         private IOneWayConverter<ExpandoObject, UserViewModel> _usrConverter = new ExpandoToUserConverter();
 
-        public virtual RowHeightViewModel SelectedRowHeight { get; set; } = RowHeightViewModel.Single;
+        RowHeightViewModel selectedRowHeight = RowHeightViewModel.Single;
 
+        public virtual UserViewModel UF { get => Users.First(); }
+        void SetRowSizes()
+        {
+            var height = SelectedRowHeight.AppointmentHeight;
+            foreach (var usr in Users)
+            {
+                usr.RowHeight = height;
+            }
+        }
+
+        public virtual RowHeightViewModel SelectedRowHeight
+        {
+            get => selectedRowHeight;
+            set
+            {
+                selectedRowHeight = value;
+                SetRowSizes();
+                RaisePropertyChanged();
+            }
+        }
         public virtual ObservableCollection<RowHeightViewModel> RowHeights { get; set; } = new ObservableCollection<RowHeightViewModel>
         {
             RowHeightViewModel.Thin,
@@ -34,7 +54,7 @@ namespace TestScheduler.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public ScheduleViewModel()
+        public SchedulerViewModel()
         {
             InitializeMockData();
         }
@@ -293,13 +313,16 @@ namespace TestScheduler.ViewModels
 
         private UserViewModel CreateUser(int id, string name, string color)
         {
+            var rnd = new Random();
             dynamic itm = new ExpandoObject();
             itm.Id = id; // + DateTime.Now.Millisecond;
             itm.Name = name;
             itm.Color = color;
             itm.Department = (DateTime.Now.Millisecond % 2 == 0) ? "USR" : "IT";
 
-            return _usrConverter.Convert(itm);
+            var usr = _usrConverter.Convert(itm);
+            usr.RowHeight = rnd.Next(SelectedRowHeight.AppointmentHeight - 5, SelectedRowHeight.AppointmentHeight + 15);
+            return usr;
         }
 
         private TaskViewModel CreateTask(int id, DateTime startTime, DateTime finishTime, int progress, string name, string tooltip, int resId)
