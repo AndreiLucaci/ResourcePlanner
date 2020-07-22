@@ -40,9 +40,9 @@
                         <dxg:GridColumn FieldName="Name" ReadOnly="True" AllowSorting="False">
                         </dxg:GridColumn>
                     </dxg:GridControl.Columns>
-
                     <dxg:GridControl.View>
-                        <!--<dxg:TableView 
+                        
+        <!--<dxg:TableView 
                             x:Name="gridTable" 
                             
                             AllowCascadeUpdate="true"
@@ -64,15 +64,20 @@
                                 </Style>
                             </dxg:TableView.RowStyle>
                         </dxg:TableView>-->
+        
                         <dxg:TreeListView
                             AutoWidth="True"
-                            ParentFieldName="Parent"
                             AutoPopulateServiceColumns="True"
                             KeyFieldName="Id"
                             ColumnFilterPopupMode="Excel"
                             HorizontalScrollbarVisibility="Visible"
+                            AutoDetectColumnTypeInHierarchicalMode="True"
+                            AutoExpandAllNodes="True"
                             x:Name="treeListView"
+                            ParentFieldName="ParentId"
                             Margin="0 64 0 0"
+                            NodeCollapsing="treeListView_NodeCollapsing"
+                            NodeExpanding="treeListView_NodeExpanding"
                             AllowCascadeUpdate="true"
                             DataNavigatorButtons="Navigation"
                             Focusable="True"
@@ -83,14 +88,52 @@
                                     <Setter Property="Background" Value="{Binding Row.Color}"></Setter>
                                 </Style>
                             </dxg:TreeListView.RowStyle>
-                            <dxg:TreeListView.RootValue>
-                                <sys:String>department</sys:String>
-                            </dxg:TreeListView.RootValue>
                         </dxg:TreeListView>
                     </dxg:GridControl.View>
                 </dxg:GridControl>
             </Grid>
         </ControlTemplate>
+        <!--<ControlTemplate x:Key="myTemplate">
+            <dxg:TreeListControl
+                ItemsSource="{Binding Users}">
+                <dxg:TreeListControl.Columns>
+                    <dxg:TreeListColumn  FieldName="Department"
+                                        AllowDrop="True"
+                                        AllowAutoFilter="True"
+                                        AllowColumnFiltering="True"
+                                        AllowSorting="False"
+                                        >
+                    </dxg:TreeListColumn>
+                    <dxg:TreeListColumn  FieldName="Id" ReadOnly="True"  AllowSorting="False">
+                    </dxg:TreeListColumn>
+                    <dxg:TreeListColumn  FieldName="Name" ReadOnly="True" AllowSorting="False">
+                    </dxg:TreeListColumn>
+                </dxg:TreeListControl.Columns>
+                <dxg:TreeListControl.View>
+                    <dxg:TreeListView
+                            AutoWidth="True"
+                            AutoPopulateServiceColumns="True"
+                            KeyFieldName="Id"
+                            ColumnFilterPopupMode="Excel"
+                            HorizontalScrollbarVisibility="Visible"
+                            AutoDetectColumnTypeInHierarchicalMode="True"
+                            AutoExpandAllNodes="True"
+                            x:Name="treeListView"
+                            Margin="0 64 0 0"
+                            AllowCascadeUpdate="true"
+                            DataNavigatorButtons="Navigation"
+                            Focusable="True"
+                            TreeDerivationMode="Selfreference">
+                        <dxg:TreeListView.RowStyle>
+                            <Style TargetType="dxg:RowControl">
+                                <Setter Property="Height" Value="{Binding Row.RowHeight}" />
+                                <Setter Property="Background" Value="{Binding Row.Color}"></Setter>
+                            </Style>
+                        </dxg:TreeListView.RowStyle>
+                    </dxg:TreeListView>
+                </dxg:TreeListControl.View>
+            </dxg:TreeListControl>
+        </ControlTemplate>-->
         <DataTemplate x:Key="appointmentContentTemplate">
             <dxschv:AppointmentContentPanel>
                 <!--<dxschv:AppointmentContentPanel.Background>
@@ -221,6 +264,7 @@
                                 GroupType="Resource"
                                 AllowAppointmentConflicts="True"
                                 FirstDayOfWeek="Monday"
+                        ItemsCollectionChanged="scheduler_ItemsCollectionChanged"
                             SizeChanged="scheduler_SizeChanged"
                             DependencyPropertyChanged="scheduler_DependencyPropertyChanged"
                                 ShowOnlyResourceAppointments="False">

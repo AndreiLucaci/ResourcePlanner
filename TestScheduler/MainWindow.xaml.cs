@@ -5,6 +5,7 @@ using DevExpress.Xpf.Core.Native;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.Scheduling;
 using DevExpress.Xpf.Scheduling.Visual;
+using DevExpress.XtraScheduler;
 using System;
 using System.Linq;
 using System.Windows.Controls;
@@ -36,6 +37,13 @@ namespace TestScheduler
         private void MainWindow_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
             AttachToModelPropertyChanges();
+            if (DataContext is SchedulerViewModel model)
+            {
+                //var nodes = model.GenerateTree();
+                //var myControl = (TreeListView)(this.Resources["myTemplate"] as ControlTemplate).FindName("treeListView", ResourceTree);
+                //myControl.Nodes.Clear();
+                //nodes.ForEach(x => myControl.Nodes.Add(x));
+            }
         }
 
         private void MainWindow_DataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
@@ -94,7 +102,7 @@ namespace TestScheduler
             foreach (var cellContainer in cellContainers)
             {
                 var nrOfAppointments = cellContainer.Appointments.Count();
-                if (nrOfAppointments >= 0 && DataContext is SchedulerViewModel model)
+                if (nrOfAppointments >= 0 && DataContext is SchedulerViewModel model && !cellContainer.Resource.Id.Equals(EmptyResourceId.Id))
                 {
                     var res = model.Users.Single(x => x.Id == (int)cellContainer.Resource.Id && x.Name == cellContainer.Resource.Caption);
 
@@ -113,6 +121,7 @@ namespace TestScheduler
                 RightScroll.ScrollToVerticalOffset(LeftScroll.VerticalOffset);
             else
                 LeftScroll.ScrollToVerticalOffset(RightScroll.VerticalOffset);
+            SyncRowSizes();
         }
 
         private void BarEditItem_EditValueChanged(object sender, System.Windows.RoutedEventArgs e)
@@ -161,6 +170,30 @@ namespace TestScheduler
         private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             SyncRowSizes();
+        }
+
+        private void scheduler_ItemsCollectionChanged(object sender, ItemsCollectionChangedEventArgs e)
+        {
+            if (e.ItemType == ItemType.AppointmentItem)
+            {
+                //SyncRowSizes();
+            }
+        }
+
+        private void treeListView_NodeCollapsing(object sender, DevExpress.Xpf.Grid.TreeList.TreeListNodeAllowEventArgs e)
+        {
+            if (e?.Row is UserViewModel user && DataContext is SchedulerViewModel model)
+            {
+                model.Users.Where(x => x.Department == user.Department && !x.Equals(user)).ToList().ForEach(x => x.IsVisible = false);
+            }
+        }
+
+        private void treeListView_NodeExpanding(object sender, DevExpress.Xpf.Grid.TreeList.TreeListNodeAllowEventArgs e)
+        {
+            if (e?.Row is UserViewModel user && DataContext is SchedulerViewModel model)
+            {
+                model.Users.Where(x => x.Department == user.Department && !x.Equals(user)).ToList().ForEach(x => x.IsVisible = true);
+            }
         }
     }
 }

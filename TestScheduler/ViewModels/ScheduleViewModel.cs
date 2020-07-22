@@ -1,4 +1,5 @@
 ﻿using DevExpress.Mvvm.DataAnnotations;
+using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.Scheduling;
 using System;
 using System.Collections.Generic;
@@ -318,10 +319,11 @@ namespace TestScheduler.ViewModels
             itm.Id = id; // + DateTime.Now.Millisecond;
             itm.Name = name;
             itm.Color = color;
-            itm.Department = (DateTime.Now.Millisecond % 2 == 0) ? "USR" : "IT";
+            itm.Department = (rnd.Next(1, 7) % 2 == 0) ? "USR" : "IT";
 
-            var usr = _usrConverter.Convert(itm);
-            usr.RowHeight = rnd.Next(SelectedRowHeight.AppointmentHeight - 5, SelectedRowHeight.AppointmentHeight + 15);
+            UserViewModel usr = _usrConverter.Convert(itm);
+            usr.ParentId = usr.Department == "USR" ? 1 : 2;
+
             return usr;
         }
 
@@ -356,6 +358,32 @@ namespace TestScheduler.ViewModels
         {
             //AllTasks.Where(x => ids.Contains(x.UserId)
             //SelectedTasks.Where(x => x.UserId == userId).ToList().ForEach(x => SelectedTasks.Remove(x));
+        }
+
+        public List<TreeListNode> GenerateTree()
+        {
+            var coll = new List<TreeListNode>();
+
+            foreach (var group in Users.GroupBy(x => x.Department))
+            {
+                var node = new TreeListNode
+                {
+                    Content = group.Key,
+                };
+
+                foreach (var itm in group)
+                {
+                    var tn = new TreeListNode
+                    {
+                        Content = itm.Name,
+                    };
+                    node.Nodes.Add(tn);
+                }
+
+                coll.Add(node);
+            }
+
+            return coll;
         }
     }
 }

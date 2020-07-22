@@ -10,6 +10,7 @@ namespace TestScheduler.ViewModels
     {
         public virtual string Parent { get; } = "department";
         public virtual int Id { get; set; }
+        public virtual int ParentId { get; set; }
         public virtual string Name { get; set; }
         string color;
         public virtual string Color
