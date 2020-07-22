@@ -236,12 +236,12 @@ namespace TestScheduler.ViewModels
         void SetTimeFrameDaily()
         {
             TimeScale.TimeScaleDay = false;
-            TimeScale.TimeScaleHour = false;
+            TimeScale.TimeScaleHour = true;
             TimeScale.TimeScaleMonth = false;
             TimeScale.TimeScaleQuarter = false;
             TimeScale.TimeScaleWeek = true;
             TimeScale.TimeScaleWorkDay = true;
-            TimeScale.TimeScaleWorkHour = true;
+            TimeScale.TimeScaleWorkHour = false;
             TimeScale.TimeScaleYear = false;
             RaisePropertyChanged(nameof(TimeScale));
         }
@@ -330,12 +330,12 @@ namespace TestScheduler.ViewModels
         private TaskViewModel CreateTask(int id, DateTime startTime, DateTime finishTime, int progress, string name, string tooltip, int resId)
         {
             dynamic itm = new ExpandoObject();
-            itm.StartDateTime = startTime;
-            itm.FinishDateTime = finishTime;
+            itm.StartDateTime = startTime > finishTime ? finishTime : startTime;
+            itm.FinishDateTime = startTime < finishTime ? finishTime : startTime;
             itm.ShownText = name;
             itm.ToolTipText = tooltip;
             itm.Completed = progress;
-            itm.Id = id + DateTime.Now.Millisecond;
+            itm.Id = id;
 
             TaskViewModel res = _taskConverter.Convert(itm);
             res.UserId = resId;

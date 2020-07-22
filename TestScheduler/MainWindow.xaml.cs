@@ -5,6 +5,7 @@ using DevExpress.Xpf.Core.Native;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.Scheduling;
 using DevExpress.Xpf.Scheduling.Visual;
+using DevExpress.Xpf.Scheduling.VisualData;
 using DevExpress.XtraScheduler;
 using System;
 using System.Linq;
@@ -97,11 +98,11 @@ namespace TestScheduler
 
         private void SyncRowSizes()
         {
-            var cellContainers = ((DevExpress.Xpf.Scheduling.VisualData.TimelineViewVisualDataBase)timelineView.VisualData).CellContainers;
+            var cellContainers = ((TimelineViewVisualDataBase)timelineView.VisualData).CellContainers;
 
             foreach (var cellContainer in cellContainers)
             {
-                var nrOfAppointments = cellContainer.Appointments.Count();
+                int nrOfAppointments = ComputeNumberOfAppointments(cellContainer);
                 if (nrOfAppointments >= 0 && DataContext is SchedulerViewModel model && !cellContainer.Resource.Id.Equals(EmptyResourceId.Id))
                 {
                     var res = model.Users.Single(x => x.Id == (int)cellContainer.Resource.Id && x.Name == cellContainer.Resource.Caption);
@@ -112,6 +113,38 @@ namespace TestScheduler
                             : (model.SelectedRowHeight.Height - 2) * nrOfAppointments + 11 + nrOfAppointments;
                 }
             }
+        }
+
+        private static int ComputeNumberOfAppointments(TimelineCellContainerViewModelBase cellContainer)
+        {
+            var allAppointments = cellContainer.Appointments.Count(x => x.Appointment.Duration != default);
+            var onTheSameLineAppointments = 0;
+            for (var i = 0; i < cellContainer.Appointments.Count(); i++)
+            {
+                for (var j = i; j < cellContainer.Appointments.Count(); j++)
+                {
+                    if (i != j)
+                    {
+                        var ap1 = cellContainer.Appointments.ElementAt(i);
+                        var ap2 = cellContainer.Appointments.ElementAt(j);
+
+                        if (
+                            cellContainer.Interval.Contains(ap1.Appointment.End)
+                            && cellContainer.Interval.Contains(ap2.Appointment.Start)
+                            && ap1.Appointment.End < ap2.Appointment.Start)
+                        {
+                            onTheSameLineAppointments++;
+                        }
+                    }
+                }
+            }
+
+            //onTheSameLineAppointments =
+            //    (onTheSameLineAppointments == default || onTheSameLineAppointments % 2 == 0)
+            //        ? onTheSameLineAppointments
+            //        : onTheSameLineAppointments - 1; // appointments on the same line come in pairs??
+
+            return allAppointments - onTheSameLineAppointments;
         }
 
         void ScrollOwner_ScrollChanged(object sender, ScrollChangedEventArgs e)
