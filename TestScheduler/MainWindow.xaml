@@ -41,30 +41,7 @@
                         </dxg:GridColumn>
                     </dxg:GridControl.Columns>
                     <dxg:GridControl.View>
-                        
-        <!--<dxg:TableView 
-                            x:Name="gridTable" 
-                            
-                            AllowCascadeUpdate="true"
-                            AllowConditionalFormattingMenu="True"
-                            AllowDragDrop="true"
-                            AllowGroupSummaryCascadeUpdate="True"
-                            ColumnFilterPopupMode="ExcelSmart"
-                            DataNavigatorButtons="Navigation"
-                            Focusable="True"
-                            AutoWidth="True"
-                            ShowTotalSummary="True"
-                            ShowGroupedColumns="True"
-                            ShowGroupFooters="True"
-                            ShowGroupPanel="True">
-                            <dxg:TableView.RowStyle>
-                                <Style TargetType="dxg:RowControl">
-                                    <Setter Property="Height" Value="{Binding Row.RowHeight}" />
-                                    <Setter Property="Background" Value="{Binding Row.Color}"></Setter>
-                                </Style>
-                            </dxg:TableView.RowStyle>
-                        </dxg:TableView>-->
-        
+
                         <dxg:TreeListView
                             AutoWidth="True"
                             AutoPopulateServiceColumns="True"
@@ -93,55 +70,10 @@
                 </dxg:GridControl>
             </Grid>
         </ControlTemplate>
-        <!--<ControlTemplate x:Key="myTemplate">
-            <dxg:TreeListControl
-                ItemsSource="{Binding Users}">
-                <dxg:TreeListControl.Columns>
-                    <dxg:TreeListColumn  FieldName="Department"
-                                        AllowDrop="True"
-                                        AllowAutoFilter="True"
-                                        AllowColumnFiltering="True"
-                                        AllowSorting="False"
-                                        >
-                    </dxg:TreeListColumn>
-                    <dxg:TreeListColumn  FieldName="Id" ReadOnly="True"  AllowSorting="False">
-                    </dxg:TreeListColumn>
-                    <dxg:TreeListColumn  FieldName="Name" ReadOnly="True" AllowSorting="False">
-                    </dxg:TreeListColumn>
-                </dxg:TreeListControl.Columns>
-                <dxg:TreeListControl.View>
-                    <dxg:TreeListView
-                            AutoWidth="True"
-                            AutoPopulateServiceColumns="True"
-                            KeyFieldName="Id"
-                            ColumnFilterPopupMode="Excel"
-                            HorizontalScrollbarVisibility="Visible"
-                            AutoDetectColumnTypeInHierarchicalMode="True"
-                            AutoExpandAllNodes="True"
-                            x:Name="treeListView"
-                            Margin="0 64 0 0"
-                            AllowCascadeUpdate="true"
-                            DataNavigatorButtons="Navigation"
-                            Focusable="True"
-                            TreeDerivationMode="Selfreference">
-                        <dxg:TreeListView.RowStyle>
-                            <Style TargetType="dxg:RowControl">
-                                <Setter Property="Height" Value="{Binding Row.RowHeight}" />
-                                <Setter Property="Background" Value="{Binding Row.Color}"></Setter>
-                            </Style>
-                        </dxg:TreeListView.RowStyle>
-                    </dxg:TreeListView>
-                </dxg:TreeListControl.View>
-            </dxg:TreeListControl>
-        </ControlTemplate>-->
+
         <DataTemplate x:Key="appointmentContentTemplate">
             <dxschv:AppointmentContentPanel>
-                <!--<dxschv:AppointmentContentPanel.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="0, 1">
-                        <GradientStop Color="White" Offset="0" />
-                        <GradientStop Color="Transparent" Offset="0.5" />
-                    </LinearGradientBrush>
-                </dxschv:AppointmentContentPanel.Background>-->
+
                 <dxschv:AppointmentContentPanel.IntervalSubject>
                     <dxschv:AppointmentIntervalSubjectPresenter/>
                 </dxschv:AppointmentContentPanel.IntervalSubject>
@@ -217,27 +149,10 @@
                 </dxr:RibbonPage>
             </dxr:RibbonPageCategory>
         </dxr:RibbonControl>
-        <!--<Grid MaxHeight="900">-->
         <DockPanel MinHeight="200" MaxHeight="1000">
             <Button Click="Button_Click" Content="Set Row Size" DockPanel.Dock="Top"/>
 
-            <!--<Grid.RowDefinitions >
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>-->
-            <!--<dxb:BarManager VerticalAlignment="Top" Grid.Row="0" x:Name="toolBarManager1" Focusable="False">
-                    <dxb:BarContainerControl VerticalAlignment="Top">
-                        <dxb:ToolBarControl >
-                            <dxb:BarStaticItem Content="Filter by time frame:" CategoryName="Tabel"/>
-                            <dxb:BarEditItem EditValueChanged="BarEditItem_EditValueChanged" EditValue="{Binding SelectedTimeFrame}">
-                                <dxb:BarEditItem.EditSettings >
-                                    <dxe:ComboBoxEditSettings ItemsSource="{Binding TimeFrames}"/>
-                                </dxb:BarEditItem.EditSettings>
-                            </dxb:BarEditItem>
-                        </dxb:ToolBarControl>
-                    </dxb:BarContainerControl>
-                </dxb:BarManager>-->
-            <!--<Grid Grid.Row="1">-->
+
             <lc:LayoutControl Orientation="Horizontal" ClipToBounds="True" SnapsToDevicePixels="True" DockPanel.Dock="Left">
                 <lc:LayoutGroup lc:LayoutControl.AllowHorizontalSizing="True" Width="200">
                     <dxsch:ResourceTreeControl Grid.Column="0" Scheduler="{Binding ElementName=scheduler}" Template="{StaticResource myTemplate}" x:Name="ResourceTree">
@@ -274,6 +189,7 @@
                                     <dxsch:ResourceMappings Caption="Name" Id="Id" Group="Department" Visible="IsVisible">
                                         <dxsch:CustomFieldMapping Mapping="Id" />
                                         <dxsch:CustomFieldMapping Mapping="Name" />
+                                        <dxsch:CustomFieldMapping Mapping="IsEnabled" ></dxsch:CustomFieldMapping>
                                     </dxsch:ResourceMappings>
                                 </dxsch:DataSource.ResourceMappings>
                                 <dxsch:DataSource.AppointmentMappings >
@@ -308,21 +224,11 @@
                                 <dxsch:TimeScaleHour IsEnabled="{Binding TimeScale.TimeScaleHour, Converter={StaticResource BooleanConverter}}" x:Name="scaleHour"/>
                                 <dxsch:TimeScaleWorkHour IsEnabled="{Binding TimeScale.TimeScaleWorkHour, Converter={StaticResource BooleanConverter}}" x:Name="scaleWorkHour"/>
                             </dxsch:TimelineView.TimeScales>
-                            <!--<dxsch:TimelineView.CellContentTemplate>
-                                        <DataTemplate>
-                                            <lc:LayoutGroup Orientation="Horizontal">
-                                                <lc:LayoutItem Label="{Binding RowData.Row.Subject}" />
-                                                <lc:LayerSeparator Width="10" />
-                                                <lc:LayoutItem Label="{Binding RowData.Row.Location}" />
-                                            </lc:LayoutGroup>
-                                        </DataTemplate>
-                                    </dxsch:TimelineView.CellContentTemplate>-->
+
                         </dxsch:TimelineView>
                     </dxsch:SchedulerControl>
                 </lc:LayoutGroup>
             </lc:LayoutControl>
-            <!--</Grid>-->
-            <!--</Grid>-->
         </DockPanel>
     </DockPanel>
 </dx:ThemedWindow>

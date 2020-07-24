@@ -10,6 +10,16 @@ namespace TestScheduler.ViewModels
     {
         public virtual string Parent { get; } = "department";
         public virtual int Id { get; set; }
+        bool _isEnable;
+        public virtual bool IsEnabled
+        {
+            get => _isEnable;
+            set
+            {
+                _isEnable = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsEnabled)));
+            }
+        }
         public virtual int ParentId { get; set; }
         public virtual string Name { get; set; }
         string color;

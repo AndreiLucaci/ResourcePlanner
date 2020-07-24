@@ -110,7 +110,7 @@ namespace TestScheduler
                     res.RowHeight =
                         nrOfAppointments == 0
                             ? model.SelectedRowHeight.Height - 1
-                            : (model.SelectedRowHeight.Height - 2) * nrOfAppointments + 11 + nrOfAppointments;
+                            : ((model.SelectedRowHeight.Height - 2) * nrOfAppointments + 11 + nrOfAppointments);
                 }
             }
         }
@@ -218,6 +218,8 @@ namespace TestScheduler
             if (e?.Row is UserViewModel user && DataContext is SchedulerViewModel model)
             {
                 model.Users.Where(x => x.Department == user.Department && !x.Equals(user)).ToList().ForEach(x => x.IsVisible = false);
+                var cellContainers = ((TimelineViewVisualDataBase)timelineView.VisualData).CellContainers;
+                //cellContainers.Where(x => x.Resource.SourceObject.Equals(user)).ToList().SelectMany(x => x.Appointments).ToList().ForEach(x => x.Appointment.)
             }
         }
 
