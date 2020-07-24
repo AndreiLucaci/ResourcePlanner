@@ -17,6 +17,7 @@
         DataContext="{dxmvvm:ViewModelSource {x:Type viewmodels:SchedulerViewModel}}">
     <dx:ThemedWindow.Resources>
         <converters:BooleanConverter x:Key="BooleanConverter" />
+        <BooleanToVisibilityConverter x:Key="BooleanVisibility" />
         <ControlTemplate x:Key="myTemplate">
             <Grid>
                 <dxg:GridControl 
@@ -39,9 +40,9 @@
                         </dxg:GridColumn>
                         <dxg:GridColumn FieldName="Name" ReadOnly="True" AllowSorting="False">
                         </dxg:GridColumn>
+                        <dxg:GridColumn FieldName="ParentId" ReadOnly="True" AllowSorting="False" ></dxg:GridColumn>
                     </dxg:GridControl.Columns>
                     <dxg:GridControl.View>
-
                         <dxg:TreeListView
                             AutoWidth="True"
                             AutoPopulateServiceColumns="True"
@@ -63,6 +64,7 @@
                                 <Style TargetType="dxg:RowControl">
                                     <Setter Property="Height" Value="{Binding Row.RowHeight}" />
                                     <Setter Property="Background" Value="{Binding Row.Color}"></Setter>
+                                    <Setter Property="Visibility" Value="{Binding Row.IsVisible,Converter={StaticResource BooleanVisibility}}"/>
                                 </Style>
                             </dxg:TreeListView.RowStyle>
                         </dxg:TreeListView>

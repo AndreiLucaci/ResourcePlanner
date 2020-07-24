@@ -1,4 +1,5 @@
-﻿using DevExpress.Mvvm;
+﻿using DevExpress.Data.Filtering;
+using DevExpress.Mvvm;
 using DevExpress.Mvvm.UI;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Core.Native;
@@ -68,8 +69,9 @@ namespace TestScheduler
 
         private void TimelineView_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
-            var myControl = (TreeListView)(this.Resources["myTemplate"] as ControlTemplate).FindName("treeListView", ResourceTree);
-            LeftScroll = LayoutTreeHelper.GetVisualChildren(myControl).OfType<ScrollViewer>().FirstOrDefault();
+            var gridControl = (GridControl)(this.Resources["myTemplate"] as ControlTemplate).FindName("gridcontrol", ResourceTree);
+            var treeListView = (TreeListView)(this.Resources["myTemplate"] as ControlTemplate).FindName("treeListView", ResourceTree);
+            LeftScroll = LayoutTreeHelper.GetVisualChildren(treeListView).OfType<ScrollViewer>().FirstOrDefault();
             RightScroll = LayoutTreeHelper.GetVisualChildren(scheduler).OfType<SchedulerScrollViewer>().FirstOrDefault();
 
             if (LeftScroll != null && RightScroll != null)
@@ -81,6 +83,23 @@ namespace TestScheduler
             }
 
             SetSameResourceColors();
+            HideRoot(gridControl, treeListView);
+        }
+
+        private void HideRoot(GridControl gridControl, TreeListView treeListView)
+        {
+            treeListView.CustomNodeFilter += CustomNodeFilter;
+            gridControl.FilterCriteria = CriteriaOperator.Parse("");
+        }
+
+        private void CustomNodeFilter(object sender, DevExpress.Xpf.Grid.TreeList.TreeListNodeFilterEventArgs e)
+        {
+            if (e.Node.Level == 0)
+            {
+                e.Visible = false;
+                e.Node.IsExpanded = true;
+                e.Handled = true;
+            }
         }
 
         private void SetSameResourceColors()

@@ -17,10 +17,20 @@ namespace TestScheduler.Converters
             var res = new UserViewModel
             {
                 Id = System.Convert.ToInt32(dic["Id"]),
-                Color = System.Convert.ToString(dic["Color"]),
-                Name = System.Convert.ToString(dic["Name"]),
-                Department = System.Convert.ToString(dic["Department"]),
+                Color = dic.ContainsKey("Color") ? System.Convert.ToString(dic["Color"]) : "#FFF",
+                Name = dic.ContainsKey("Name") ? System.Convert.ToString(dic["Name"]) : string.Empty,
+                Department = dic.ContainsKey("Department") ? System.Convert.ToString(dic["Department"]) : string.Empty,
             };
+
+            if (dic.ContainsKey("ParentId"))
+            {
+                res.ParentId = System.Convert.ToInt32(dic["ParentId"]);
+            }
+
+            if (dic.ContainsKey("IsVisible"))
+            {
+                res.IsVisible = System.Convert.ToBoolean(dic["IsVisible"]);
+            }
 
             return res;
         }

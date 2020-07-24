@@ -57,7 +57,9 @@ namespace TestScheduler.ViewModels
 
         public SchedulerViewModel()
         {
+            InitializeRoot();
             InitializeMockData();
+
         }
 
         private void InitializeMockData()
@@ -85,7 +87,7 @@ namespace TestScheduler.ViewModels
                 CreateUser(20, "Léa","#f6dce6")
             };
 
-            Users = new ObservableCollection<UserViewModel>(res.GroupBy(x => x.Department).OrderBy(x => x.Key).SelectMany(x => x).ToArray());
+            InitializeUsers(res);
 
             var itms = new List<TaskViewModel>{
                 CreateTask( 1, UnixTimeStampToDateTime(1594624987d), UnixTimeStampToDateTime(1595746824d), 37,"Kitra", "velit. Cras lorem lorem, luctus ut, pellentesque", 7),
@@ -198,10 +200,41 @@ namespace TestScheduler.ViewModels
             UsersRes = new ObservableCollection<ResourceItem>(Users.Select(converter.Convert));
         }
 
+        private void InitializeUsers(List<UserViewModel> res)
+        {
+            //var grouped = res.GroupBy(x => x.Department).OrderBy(x => x.Key).ToList();
+
+            //grouped.ForEach(x =>
+            //{
+            //    var first = x.FirstOrDefault();
+            //    if (first != null)
+            //    {
+            //        first.ParentId = Root.ParentId;
+            //    }
+            //});
+
+            //Users = new ObservableCollection<UserViewModel>(res.GroupBy(x => x.Department).OrderBy(x => x.Key).SelectMany(x => x).ToArray())
+            //{
+            //    Root
+            //};
+
+            Users = new ObservableCollection<UserViewModel>(res.GroupBy(x => x.Department).OrderBy(x => x.Key).SelectMany(x => x).ToArray());
+        }
+
+        private void InitializeRoot()
+        {
+            dynamic parUser = new ExpandoObject();
+            parUser.Id = -1;
+            parUser.ParentId = 0;
+            parUser.IsVisible = false;
+
+            Root = _usrConverter.Convert(parUser);
+        }
 
         public virtual ObservableCollection<TaskViewModel> SelectedTasks { get; set; } = new ObservableCollection<TaskViewModel>();
         public virtual ObservableCollection<TaskViewModel> AllTasks { get; set; } = new ObservableCollection<TaskViewModel>();
         public virtual ObservableCollection<UserViewModel> Users { get; set; } = new ObservableCollection<UserViewModel>();
+        public virtual UserViewModel Root { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -314,17 +347,32 @@ namespace TestScheduler.ViewModels
 
         private UserViewModel CreateUser(int id, string name, string color)
         {
-            var rnd = new Random();
+            var (department, pid) = GetDepartment(id);
             dynamic itm = new ExpandoObject();
             itm.Id = id; // + DateTime.Now.Millisecond;
             itm.Name = name;
             itm.Color = color;
-            itm.Department = (rnd.Next(1, 7) % 2 == 0) ? "USR" : "IT";
+            itm.Department = department;
 
             UserViewModel usr = _usrConverter.Convert(itm);
-            usr.ParentId = usr.Department == "USR" ? 1 : 2;
+            usr.ParentId = pid;
 
             return usr;
+        }
+
+        private (string, int) GetDepartment(int id)
+        {
+            var it = id % 3;
+            switch (it)
+            {
+                case 1:
+                    return ("USR", 2);
+                case 2:
+                    return ("TEMP", 3);
+                default:
+                case 0:
+                    return ("IT", 1);
+            }
         }
 
         private TaskViewModel CreateTask(int id, DateTime startTime, DateTime finishTime, int progress, string name, string tooltip, int resId)
