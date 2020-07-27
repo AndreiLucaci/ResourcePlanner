@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DevExpress.Mvvm.Gantt;
 using TestScheduler.ViewModels;
 
 namespace TestScheduler.Converters
@@ -19,7 +16,7 @@ namespace TestScheduler.Converters
                 Id = System.Convert.ToInt32(dic["Id"]),
                 Color = dic.ContainsKey("Color") ? System.Convert.ToString(dic["Color"]) : "#FFF",
                 Name = dic.ContainsKey("Name") ? System.Convert.ToString(dic["Name"]) : string.Empty,
-                Department = dic.ContainsKey("Department") ? System.Convert.ToString(dic["Department"]) : string.Empty,
+
             };
 
             if (dic.ContainsKey("ParentId"))
@@ -30,6 +27,12 @@ namespace TestScheduler.Converters
             if (dic.ContainsKey("IsVisible"))
             {
                 res.IsVisible = System.Convert.ToBoolean(dic["IsVisible"]);
+            }
+
+            if (dic.ContainsKey("Department"))
+            {
+                res.Department = System.Convert.ToString(dic["Department"]);
+                res.ParentId = (int)Enum.Parse(typeof(Department), res.Department);
             }
 
             return res;

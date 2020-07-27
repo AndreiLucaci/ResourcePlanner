@@ -202,30 +202,34 @@ namespace TestScheduler.ViewModels
 
         private void InitializeUsers(List<UserViewModel> res)
         {
-            //var grouped = res.GroupBy(x => x.Department).OrderBy(x => x.Key).ToList();
+            var grouped = res.GroupBy(x => x.Department).OrderBy(x => x.Key).ToList();
 
-            //grouped.ForEach(x =>
-            //{
-            //    var first = x.FirstOrDefault();
-            //    if (first != null)
-            //    {
-            //        first.ParentId = Root.ParentId;
-            //    }
-            //});
+            grouped.ForEach(x =>
+            {
+                var first = x.FirstOrDefault();
+                if (first != null)
+                {
+                    first.ParentId = Root.Id;
+                    x.Where(y => !y.Equals(first)).ToList().ForEach(y =>
+                    {
+                        y.ParentId = first.Id;
+                    });
+                }
+            });
 
-            //Users = new ObservableCollection<UserViewModel>(res.GroupBy(x => x.Department).OrderBy(x => x.Key).SelectMany(x => x).ToArray())
-            //{
-            //    Root
-            //};
+            Users = new ObservableCollection<UserViewModel>(res.GroupBy(x => x.Department).OrderBy(x => x.Key).SelectMany(x => x).ToArray())
+            {
+                Root
+            };
 
-            Users = new ObservableCollection<UserViewModel>(res.GroupBy(x => x.Department).OrderBy(x => x.Key).SelectMany(x => x).ToArray());
+            //Users = new ObservableCollection<UserViewModel>(res.GroupBy(x => x.Department).OrderBy(x => x.Key).SelectMany(x => x).ToArray());
         }
 
         private void InitializeRoot()
         {
             dynamic parUser = new ExpandoObject();
             parUser.Id = -1;
-            parUser.ParentId = 0;
+            parUser.ParentId = (int)Department.Root;
             parUser.IsVisible = false;
 
             Root = _usrConverter.Convert(parUser);
@@ -244,6 +248,8 @@ namespace TestScheduler.ViewModels
             dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
             return dtDateTime;
         }
+
+        public virtual MarginsViewModel MarginsViewModel { get; set; } = new MarginsViewModel();
 
         internal void RefreshTimeFrameSelection()
         {
@@ -265,6 +271,9 @@ namespace TestScheduler.ViewModels
                     SetTimeFrameYearly();
                     break;
             }
+
+            MarginsViewModel.ComputeLeftGridMargin(TimeScale);
+            RaisePropertyChanged(nameof(MarginsViewModel));
         }
         void SetTimeFrameDaily()
         {
@@ -347,7 +356,7 @@ namespace TestScheduler.ViewModels
 
         private UserViewModel CreateUser(int id, string name, string color)
         {
-            var (department, pid) = GetDepartment(id);
+            var (department, pid) = GetDepartment();
             dynamic itm = new ExpandoObject();
             itm.Id = id; // + DateTime.Now.Millisecond;
             itm.Name = name;
@@ -360,19 +369,11 @@ namespace TestScheduler.ViewModels
             return usr;
         }
 
-        private (string, int) GetDepartment(int id)
+        private (string, int) GetDepartment()
         {
-            var it = id % 3;
-            switch (it)
-            {
-                case 1:
-                    return ("USR", 2);
-                case 2:
-                    return ("TEMP", 3);
-                default:
-                case 0:
-                    return ("IT", 1);
-            }
+            var departmnet = DepartmentChooser.Choose();
+
+            return (Enum.GetName(typeof(Department), departmnet), (int)departmnet);
         }
 
         private TaskViewModel CreateTask(int id, DateTime startTime, DateTime finishTime, int progress, string name, string tooltip, int resId)

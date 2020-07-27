@@ -88,8 +88,9 @@ namespace TestScheduler
 
         private void HideRoot(GridControl gridControl, TreeListView treeListView)
         {
+            gridControl.ItemsSource = (DataContext as SchedulerViewModel)?.Users;
             treeListView.CustomNodeFilter += CustomNodeFilter;
-            gridControl.FilterCriteria = CriteriaOperator.Parse("");
+            gridControl.FilterCriteria = CriteriaOperator.Parse("true");
         }
 
         private void CustomNodeFilter(object sender, DevExpress.Xpf.Grid.TreeList.TreeListNodeFilterEventArgs e)

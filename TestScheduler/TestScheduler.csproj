@@ -86,6 +86,8 @@
       <DependentUpon>CustomRecurrenceWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions\ObservableCollectionExtensions.cs" />
+    <Compile Include="ViewModels\Department.cs" />
+    <Compile Include="ViewModels\MarginsViewModel.cs" />
     <Compile Include="ViewModels\RowHeightViewModel.cs" />
     <Compile Include="ViewModels\ScheduleViewModel.cs" />
     <Compile Include="ViewModels\TaskViewModel.cs" />

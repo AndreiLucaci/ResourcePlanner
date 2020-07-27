@@ -26,21 +26,21 @@
                     GroupRowExpanding="gridcontrol_GroupRowExpanding"
                     GroupRowCollapsing="gridcontrol_GroupRowCollapsing"
                     x:Name="gridcontrol"
-                    Loaded="GridControl_Loaded"
-                    ItemsSource="{Binding Users}">
+                    Loaded="GridControl_Loaded">
                     <dxg:GridControl.Columns>
                         <dxg:GridColumn FieldName="Department"
                                         AllowDrop="True"
                                         AllowAutoFilter="True"
                                         AllowColumnFiltering="True"
                                         AllowSorting="False"
+                                        Visible="False"
                                         AllowGrouping="True">
                         </dxg:GridColumn>
                         <dxg:GridColumn FieldName="Id" ReadOnly="True"  AllowSorting="False">
                         </dxg:GridColumn>
                         <dxg:GridColumn FieldName="Name" ReadOnly="True" AllowSorting="False">
                         </dxg:GridColumn>
-                        <dxg:GridColumn FieldName="ParentId" ReadOnly="True" AllowSorting="False" ></dxg:GridColumn>
+                        <dxg:GridColumn FieldName="ParentId" ReadOnly="True" AllowSorting="False" Visible="False"></dxg:GridColumn>
                     </dxg:GridControl.Columns>
                     <dxg:GridControl.View>
                         <dxg:TreeListView
@@ -53,7 +53,7 @@
                             AutoExpandAllNodes="True"
                             x:Name="treeListView"
                             ParentFieldName="ParentId"
-                            Margin="0 64 0 0"
+                            Margin="{Binding MarginsViewModel.LeftGridMargin}"
                             NodeCollapsing="treeListView_NodeCollapsing"
                             NodeExpanding="treeListView_NodeExpanding"
                             AllowCascadeUpdate="true"
@@ -181,6 +181,7 @@
                                 GroupType="Resource"
                                 AllowAppointmentConflicts="True"
                                 FirstDayOfWeek="Monday"
+                        Margin="0 0 0 30"
                         ItemsCollectionChanged="scheduler_ItemsCollectionChanged"
                             SizeChanged="scheduler_SizeChanged"
                             DependencyPropertyChanged="scheduler_DependencyPropertyChanged"
