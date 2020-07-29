@@ -33,8 +33,8 @@ namespace TestScheduler.ViewModels
             }
         }
         public virtual string Department { get; set; }
-        int rowHeight;
-        public virtual int RowHeight
+        double rowHeight;
+        public virtual double RowHeight
         {
             get => rowHeight; set
             {

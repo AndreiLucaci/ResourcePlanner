@@ -118,19 +118,24 @@ namespace TestScheduler
 
         private void SyncRowSizes()
         {
-            var cellContainers = ((TimelineViewVisualDataBase)timelineView.VisualData).CellContainers;
+            var appointmentsContainerPanels =
+                LayoutTreeHelper
+                    .GetVisualChildren(scheduler)
+                    .OfType<DevExpress.Xpf.Scheduling.Panels.TimelineAppointmentsContainerPanel>()
+                    //.OfType<DevExpress.Xpf.Scheduling.Panels.TimeRegionDecorationPanel>()
+                    .ToList();
 
-            foreach (var cellContainer in cellContainers)
+            foreach (var appointmentContainerPanel in appointmentsContainerPanels)
             {
-                int nrOfAppointments = ComputeNumberOfAppointments(cellContainer);
-                if (nrOfAppointments >= 0 && DataContext is SchedulerViewModel model && !cellContainer.Resource.Id.Equals(EmptyResourceId.Id))
+                if (appointmentContainerPanel.DataContext is TimelineCellContainerViewModel dtCtx &&
+                    DataContext is SchedulerViewModel model &&
+                    (!dtCtx.Resource?.Id.Equals(EmptyResourceId.Id)).GetValueOrDefault())
                 {
-                    var res = model.Users.Single(x => x.Id == (int)cellContainer.Resource.Id && x.Name == cellContainer.Resource.Caption);
-
+                    var res = model.Users.Single(x => x.Id == (int)dtCtx.Resource.Id && x.Name == dtCtx.Resource.Caption);
                     res.RowHeight =
-                        nrOfAppointments == 0
-                            ? model.SelectedRowHeight.Height - 1
-                            : ((model.SelectedRowHeight.Height - 2) * nrOfAppointments + 11 + nrOfAppointments);
+                        appointmentContainerPanel.ActualHeight +
+                        appointmentContainerPanel.Margin.Bottom +
+                        appointmentContainerPanel.Margin.Top;
                 }
             }
         }

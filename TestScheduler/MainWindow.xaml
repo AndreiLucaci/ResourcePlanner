@@ -33,7 +33,6 @@
                                         AllowAutoFilter="True"
                                         AllowColumnFiltering="True"
                                         AllowSorting="False"
-                                        Visible="False"
                                         AllowGrouping="True">
                         </dxg:GridColumn>
                         <dxg:GridColumn FieldName="Id" ReadOnly="True"  AllowSorting="False">
