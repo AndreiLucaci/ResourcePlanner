@@ -1,4 +1,6 @@
 ﻿using DevExpress.Mvvm.DataAnnotations;
+using DevExpress.Mvvm.UI;
+using DevExpress.Xpf.Scheduling;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -13,6 +15,8 @@ namespace TestScheduler.ViewModels
         private int TopMarginPadding = 9;
         private int LeftHeaderHeight = 20;
 
+        public SchedulerControl View { get; set; }
+
 
         private string leftGridMargin;
         public virtual string LeftGridMargin
@@ -26,14 +30,23 @@ namespace TestScheduler.ViewModels
 
         public void ComputeLeftGridMargin(TimeScaleViewModel timeScale)
         {
+
+
             var nrOfRows = GetNumberOfRows(timeScale);
 
             var maxHeight = (nrOfRows * TimeFrameRowHeight) + TopMarginPadding;
             var neededMargin = maxHeight - LeftHeaderHeight + (nrOfRows > 1 ? nrOfRows - 1 : 0);
 
+
+            //var dateHeaderPanel = LayoutTreeHelper.GetVisualChildren(View).OfType<DevExpress.Xpf.Scheduling.Panels.TimelineIndicatorContainerPanel>().FirstOrDefault();
+            //if (dateHeaderPanel != null)
+            //{
+            //var neededMargin = dateHeaderPanel.ActualHeight + dateHeaderPanel.Margin.Bottom + dateHeaderPanel.Margin.Top;
+
             var margin = $"0 {neededMargin} 0 0";
 
             LeftGridMargin = margin;
+            //}
         }
 
         private int GetNumberOfRows(TimeScaleViewModel viewModel)

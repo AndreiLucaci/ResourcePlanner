@@ -41,6 +41,7 @@ namespace TestScheduler
             AttachToModelPropertyChanges();
             if (DataContext is SchedulerViewModel model)
             {
+                model.View = scheduler;
                 //var nodes = model.GenerateTree();
                 //var myControl = (TreeListView)(this.Resources["myTemplate"] as ControlTemplate).FindName("treeListView", ResourceTree);
                 //myControl.Nodes.Clear();

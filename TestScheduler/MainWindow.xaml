@@ -180,6 +180,7 @@
                                 GroupType="Resource"
                                 AllowAppointmentConflicts="True"
                                 FirstDayOfWeek="Monday"
+                        dx:ThemeManager.ThemeName="Office2019Colorful"
                         Margin="0 0 0 30"
                         ItemsCollectionChanged="scheduler_ItemsCollectionChanged"
                             SizeChanged="scheduler_SizeChanged"

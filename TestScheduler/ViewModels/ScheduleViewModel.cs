@@ -240,6 +240,18 @@ namespace TestScheduler.ViewModels
         public virtual ObservableCollection<UserViewModel> Users { get; set; } = new ObservableCollection<UserViewModel>();
         public virtual UserViewModel Root { get; set; }
 
+        private SchedulerControl _view;
+
+        public SchedulerControl View
+        {
+            get => _view;
+            set
+            {
+                _view = value;
+                MarginsViewModel.View = value;
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
