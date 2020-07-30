@@ -151,9 +151,6 @@
             </dxr:RibbonPageCategory>
         </dxr:RibbonControl>
         <DockPanel MinHeight="200" MaxHeight="1000">
-            <Button Click="Button_Click" Content="Set Row Size" DockPanel.Dock="Top"/>
-
-
             <lc:LayoutControl Orientation="Horizontal" ClipToBounds="True" SnapsToDevicePixels="True" DockPanel.Dock="Left">
                 <lc:LayoutGroup lc:LayoutControl.AllowHorizontalSizing="True" Width="200">
                     <dxsch:ResourceTreeControl Grid.Column="0" Scheduler="{Binding ElementName=scheduler}" Template="{StaticResource myTemplate}" x:Name="ResourceTree">
